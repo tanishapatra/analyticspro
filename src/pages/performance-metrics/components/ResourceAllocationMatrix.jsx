@@ -26,6 +26,7 @@ const ResourceAllocationMatrix = ({ allocations }) => {
           Capacity planning and workload distribution across projects
         </p>
       </div>
+
       <div className="overflow-x-auto -mx-4 md:-mx-5 lg:-mx-6 px-4 md:px-5 lg:px-6">
         <div className="min-w-[600px]">
           <div className="grid grid-cols-12 gap-2 mb-3 pb-2 border-b border-border">
@@ -39,7 +40,7 @@ const ResourceAllocationMatrix = ({ allocations }) => {
               Utilization
             </div>
             <div className="col-span-2 text-xs font-medium text-muted-foreground text-center">
-              Hours/Week
+              Estimated Weekly Load
             </div>
             <div className="col-span-2 text-xs font-medium text-muted-foreground text-center">
               Status
@@ -94,7 +95,7 @@ const ResourceAllocationMatrix = ({ allocations }) => {
                     {allocation?.hoursPerWeek}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    of {allocation?.totalCapacity}h
+                    out of {allocation?.totalCapacity}h capacity
                   </p>
                 </div>
 
@@ -108,6 +109,7 @@ const ResourceAllocationMatrix = ({ allocations }) => {
           </div>
         </div>
       </div>
+
       <div className="mt-4 md:mt-6 pt-4 border-t border-border">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           <div className="flex items-center gap-2">

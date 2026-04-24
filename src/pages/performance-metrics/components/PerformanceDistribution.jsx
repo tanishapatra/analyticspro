@@ -18,7 +18,7 @@ const PerformanceDistribution = ({ data }) => {
             {payload?.[0]?.payload?.range}
           </p>
           <p className="text-xs text-muted-foreground">
-            {payload?.[0]?.value} team members
+            {payload?.[0]?.value} orders
           </p>
         </div>
       );
@@ -33,9 +33,10 @@ const PerformanceDistribution = ({ data }) => {
           Performance Distribution
         </h3>
         <p className="text-xs md:text-sm text-muted-foreground">
-          Team member distribution across performance ranges
+          Order distribution across sales ranges
         </p>
       </div>
+
       <div className="w-full h-48 md:h-56 lg:h-64" aria-label="Performance Distribution Histogram">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -43,6 +44,7 @@ const PerformanceDistribution = ({ data }) => {
             margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+
             <XAxis 
               dataKey="range" 
               tick={{ fill: 'var(--color-muted-foreground)', fontSize: 11 }}
@@ -50,16 +52,19 @@ const PerformanceDistribution = ({ data }) => {
               textAnchor="end"
               height={60}
             />
+
             <YAxis 
               tick={{ fill: 'var(--color-muted-foreground)', fontSize: 11 }}
               label={{ 
-                value: 'Team Members', 
+                value: 'Orders', 
                 angle: -90, 
                 position: 'insideLeft',
                 style: { fill: 'var(--color-muted-foreground)', fontSize: 11 }
               }}
             />
+
             <Tooltip content={<CustomTooltip />} />
+
             <Bar 
               dataKey="count" 
               radius={[4, 4, 0, 0]}
@@ -68,9 +73,11 @@ const PerformanceDistribution = ({ data }) => {
                 <Cell key={`cell-${index}`} fill={COLORS?.[index % COLORS?.length]} />
               ))}
             </Bar>
+
           </BarChart>
         </ResponsiveContainer>
       </div>
+
       <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
         {data?.map((item, index) => (
           <div key={index} className="flex items-center gap-2">

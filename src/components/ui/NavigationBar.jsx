@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Icon from '../AppIcon';
 
-
 const NavigationBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -38,6 +37,38 @@ const NavigationBar = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  // 🔥 CSV Upload Logic
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const text = event.target.result;
+
+      const rows = text.split("\n").map(r => r.split(","));
+      const headers = rows[0];
+
+      const parsedData = rows.slice(1).map(row => {
+        let obj = {};
+        headers.forEach((h, i) => {
+          obj[h.trim()] = row[i]?.trim();
+        });
+        return obj;
+      });
+
+      localStorage.setItem("dashboardData", JSON.stringify(parsedData));
+
+    
+      window.dispatchEvent(new Event("dataUpdated"));
+
+      alert("CSV Uploaded ");
+    };
+
+    reader.readAsText(file);
+  };
+
   return (
     <>
       <nav className="nav-bar">
@@ -59,7 +90,8 @@ const NavigationBar = () => {
             </button>
           </div>
 
-          <div className="nav-bar-menu">
+          {/* 🔥 MENU + UPLOAD */}
+          <div className="nav-bar-menu flex items-center gap-4">
             {navigationItems?.map((item) => (
               <button
                 key={item?.id}
@@ -71,6 +103,28 @@ const NavigationBar = () => {
                 {item?.label}
               </button>
             ))}
+
+            {/* 🔥 Styled Upload Button */}
+            <div>
+              <label
+                style={{
+                  padding: "6px 12px",
+                  backgroundColor: "#2563eb",
+                  color: "white",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  fontSize: "12px"
+                }}
+              >
+                Upload CSV
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={handleFileUpload}
+                  style={{ display: "none" }}
+                />
+              </label>
+            </div>
           </div>
 
           <button
@@ -83,6 +137,8 @@ const NavigationBar = () => {
           </button>
         </div>
       </nav>
+
+      {/* MOBILE MENU */}
       <div className={`nav-bar-mobile-menu ${isMobileMenuOpen ? 'open' : 'closed'}`}>
         <div className="nav-bar-mobile-header">
           <div className="flex items-center gap-3">
@@ -116,6 +172,7 @@ const NavigationBar = () => {
           ))}
         </div>
       </div>
+
       {isMobileMenuOpen && (
         <div
           className="fixed inset-0 z-[1050] bg-background md:hidden"
