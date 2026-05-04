@@ -110,26 +110,8 @@ const ResourceAllocationMatrix = ({ allocations }) => {
         </div>
       </div>
 
-      <div className="mt-4 md:mt-6 pt-4 border-t border-border">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-sm bg-success flex-shrink-0" />
-            <span className="text-xs text-muted-foreground">Optimal (50-74%)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-sm bg-warning flex-shrink-0" />
-            <span className="text-xs text-muted-foreground">High Load (75-89%)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-sm bg-error flex-shrink-0" />
-            <span className="text-xs text-muted-foreground">Over-allocated (90%+)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-sm bg-muted-foreground flex-shrink-0" />
-            <span className="text-xs text-muted-foreground">Under-utilized (&lt;50%)</span>
-          </div>
-        </div>
-      </div>
+      {/* ❌ legend removed completely */}
+
     </div>
   );
 };

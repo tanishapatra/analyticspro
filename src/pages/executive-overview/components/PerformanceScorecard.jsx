@@ -8,11 +8,8 @@ const PerformanceScorecard = ({ departments }) => {
         <h3 className="text-lg md:text-xl font-heading font-semibold text-foreground">
           Department Performance Scorecard
         </h3>
-        <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted hover:bg-muted/80 text-sm font-medium text-foreground transition-smooth">
-          <Icon name="Download" size={16} />
-          <span className="hidden sm:inline">Export Report</span>
-        </button>
       </div>
+
       <div className="space-y-4 md:space-y-6">
         {departments?.map((dept, index) => {
           const progressPercentage = (dept?.current / dept?.target) * 100;
@@ -21,6 +18,7 @@ const PerformanceScorecard = ({ departments }) => {
           return (
             <div key={index} className="space-y-2">
               <div className="flex items-center justify-between flex-wrap gap-2">
+
                 <div className="flex items-center gap-3">
                   <div 
                     className="w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -28,6 +26,7 @@ const PerformanceScorecard = ({ departments }) => {
                   >
                     <Icon name={dept?.icon} size={18} color={dept?.color} className="md:w-5 md:h-5" />
                   </div>
+
                   <div>
                     <p className="text-sm md:text-base font-medium text-foreground">
                       {dept?.name}
@@ -37,6 +36,7 @@ const PerformanceScorecard = ({ departments }) => {
                     </p>
                   </div>
                 </div>
+
                 <div className="flex items-center gap-3">
                   <div className="text-right">
                     <p className="text-sm md:text-base font-semibold text-foreground">
@@ -46,6 +46,7 @@ const PerformanceScorecard = ({ departments }) => {
                       Target: {dept?.target?.toLocaleString()}
                     </p>
                   </div>
+
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                     isOnTarget ? 'bg-success/10' : 'bg-warning/10'
                   }`}>
@@ -56,7 +57,9 @@ const PerformanceScorecard = ({ departments }) => {
                     />
                   </div>
                 </div>
+
               </div>
+
               <div className="relative">
                 <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
                   <div 
@@ -67,17 +70,8 @@ const PerformanceScorecard = ({ departments }) => {
                     }}
                   />
                 </div>
-                <div className="flex items-center justify-between mt-1">
-                  <span className="text-xs text-muted-foreground">
-                    {progressPercentage?.toFixed(1)}% Complete
-                  </span>
-                  <span className={`text-xs font-medium ${
-                    isOnTarget ? 'text-success' : 'text-warning'
-                  }`}>
-                    {isOnTarget ? 'On Track' : 'Needs Attention'}
-                  </span>
-                </div>
               </div>
+
             </div>
           );
         })}
@@ -86,4 +80,4 @@ const PerformanceScorecard = ({ departments }) => {
   );
 };
 
-export default PerformanceScorecard; 
+export default PerformanceScorecard;
