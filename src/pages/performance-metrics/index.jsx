@@ -8,15 +8,13 @@ import MetricCard from './components/MetricCard';
 import TeamPerformanceChart from './components/TeamPerformanceChart';
 import TeamLeaderboard from './components/TeamLeaderboard';
 import PerformanceDistribution from './components/PerformanceDistribution';
-// ❌ removed MilestoneTracker import
 import ResourceAllocationMatrix from './components/ResourceAllocationMatrix';
 
 const PerformanceMetrics = () => {
   const [data, setData] = useState([]);
-  const [selectedTeam, setSelectedTeam] = useState('engineering');
+  const [selectedTeam, setSelectedTeam] = useState('technology');
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
 
-  // 🔥 FIXED: now listens to uploaded CSV change
   useEffect(() => {
 
     const fetchData = async () => {
@@ -28,15 +26,14 @@ const PerformanceMetrics = () => {
       const stored = localStorage.getItem("dashboardData");
 
       if (stored) {
-        setData(JSON.parse(stored)); // ✅ uploaded CSV
+        setData(JSON.parse(stored));
       } else {
-        fetchData(); // default CSV
+        fetchData();
       }
     };
 
     loadData();
 
-    // ✅ LISTEN TO CUSTOM EVENT
     window.addEventListener("dataUpdated", loadData);
 
     return () => {
@@ -45,13 +42,13 @@ const PerformanceMetrics = () => {
 
   }, []);
 
+  // ✅ FIXED TEAM MAP
   const teamMap = {
-    engineering: 'Technology',
-    sales: 'Office Supplies',
-    marketing: 'Furniture'
+    technology: 'Technology',
+    office: 'Office Supplies',
+    furniture: 'Furniture'
   };
 
-  // 🔥 FILTER (unchanged)
   const filteredData = useMemo(() => {
     return data
       .filter(row => row["Category"] === teamMap[selectedTeam])
@@ -69,7 +66,6 @@ const PerformanceMetrics = () => {
       });
   }, [data, selectedTeam, selectedPeriod]);
 
-  // 🔥 KPI (unchanged)
   const totalSales = filteredData.reduce((s, r) => s + Number(r.Sales || 0), 0);
   const totalProfit = filteredData.reduce((s, r) => s + Number(r.Profit || 0), 0);
   const totalQuantity = filteredData.reduce((s, r) => s + Number(r.Quantity || 0), 0);
@@ -111,7 +107,6 @@ const PerformanceMetrics = () => {
     }
   ];
 
-  // 🔥 CUSTOMER MAP (unchanged)
   const customerMap = {};
   filteredData.forEach(row => {
     const name = row["Customer Name"];
@@ -133,7 +128,6 @@ const PerformanceMetrics = () => {
     productivity: v.sales
   }));
 
-  // 🔥 LEADERBOARD (unchanged)
   const leaderboardMembers = Object.entries(customerMap)
     .map(([name, v], i) => {
       const score = v.sales > 0 ? (v.profit / v.sales) * 100 : 0;
@@ -150,7 +144,6 @@ const PerformanceMetrics = () => {
     .sort((a, b) => b.score - a.score)
     .slice(0, 5);
 
-  // 🔥 DISTRIBUTION (unchanged)
   const distributionData = [
     { range: '0-5000', count: 0 },
     { range: '5000-20000', count: 0 },
@@ -167,7 +160,6 @@ const PerformanceMetrics = () => {
     else distributionData[3].count++;
   });
 
-  // 🔥 RESOURCE (unchanged)
   const regionMap = {};
   filteredData.forEach(row => {
     const region = row.Region;
@@ -198,7 +190,7 @@ const PerformanceMetrics = () => {
       id: i,
       name: region,
       role: 'Region',
-      project: selectedTeam.toUpperCase(),
+      project: teamMap[selectedTeam], // ✅ FIXED
       utilization,
       hoursPerWeek: hours,
       totalCapacity: capacity,
@@ -219,9 +211,9 @@ const PerformanceMetrics = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <Select value={selectedTeam} onChange={setSelectedTeam} options={[
-              { value: 'engineering', label: 'Engineering' },
-              { value: 'sales', label: 'Sales' },
-              { value: 'marketing', label: 'Marketing' }
+              { value: 'technology', label: 'Technology' },
+              { value: 'office', label: 'Office Supplies' },
+              { value: 'furniture', label: 'Furniture' }
             ]} />
 
             <Select value={selectedPeriod} onChange={setSelectedPeriod} options={[
