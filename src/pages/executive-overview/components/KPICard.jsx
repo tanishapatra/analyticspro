@@ -2,7 +2,6 @@ import React from 'react';
 import Icon from '../../../components/AppIcon';
 
 const KPICard = ({ title, value, change, trend, target, icon, iconColor }) => {
-  const isPositive = change >= 0;
   const targetProgress = target ? (value / target) * 100 : null;
 
   return (
@@ -23,25 +22,9 @@ const KPICard = ({ title, value, change, trend, target, icon, iconColor }) => {
           <Icon name={icon} size={20} color={iconColor} className="md:w-6 md:h-6" />
         </div>
       </div>
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-2">
-          <div className={`flex items-center gap-1 px-2 py-1 rounded-md ${
-            isPositive ? 'bg-success/10' : 'bg-error/10'
-          }`}>
-            <Icon 
-              name={isPositive ? 'TrendingUp' : 'TrendingDown'} 
-              size={14} 
-              color={isPositive ? 'var(--color-success)' : 'var(--color-error)'}
-            />
-            <span className={`text-xs md:text-sm font-medium ${
-              isPositive ? 'text-success' : 'text-error'
-            }`}>
-              {isPositive ? '+' : ''}{change}%
-            </span>
-          </div>
-          <span className="text-xs md:text-sm text-muted-foreground">vs last period</span>
-        </div>
-      </div>
+
+      {/* ❌ removed fake change + comparison */}
+
       {target && (
         <div className="mt-3 md:mt-4">
           <div className="flex items-center justify-between mb-1">
@@ -56,6 +39,7 @@ const KPICard = ({ title, value, change, trend, target, icon, iconColor }) => {
           </div>
         </div>
       )}
+
       <div className="mt-3 md:mt-4 h-12 md:h-16">
         <svg width="100%" height="100%" className="sparkline">
           <polyline
@@ -63,7 +47,7 @@ const KPICard = ({ title, value, change, trend, target, icon, iconColor }) => {
               `${(idx / (trend?.length - 1)) * 100},${100 - val}`
             )?.join(' ')}
             fill="none"
-            stroke={isPositive ? 'var(--color-success)' : 'var(--color-error)'}
+            stroke="var(--color-primary)"
             strokeWidth="2"
             vectorEffect="non-scaling-stroke"
           />
