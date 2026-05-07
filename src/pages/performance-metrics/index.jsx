@@ -11,6 +11,7 @@ import PerformanceDistribution from './components/PerformanceDistribution';
 import ResourceAllocationMatrix from './components/ResourceAllocationMatrix';
 
 const PerformanceMetrics = () => {
+
   const [data, setData] = useState([]);
   const [selectedTeam, setSelectedTeam] = useState('technology');
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
@@ -42,7 +43,7 @@ const PerformanceMetrics = () => {
 
   }, []);
 
-  // ✅ FIXED TEAM MAP
+  // ✅ TEAM MAP
   const teamMap = {
     technology: 'Technology',
     office: 'Office Supplies',
@@ -54,6 +55,7 @@ const PerformanceMetrics = () => {
       .filter(row => row["Category"] === teamMap[selectedTeam])
       .filter(row => {
         const date = new Date(row["Order Date"]);
+
         if (isNaN(date)) return false;
 
         const m = date.getMonth();
@@ -64,31 +66,53 @@ const PerformanceMetrics = () => {
 
         return true;
       });
+
   }, [data, selectedTeam, selectedPeriod]);
 
-  const totalSales = filteredData.reduce((s, r) => s + Number(r.Sales || 0), 0);
-  const totalProfit = filteredData.reduce((s, r) => s + Number(r.Profit || 0), 0);
-  const totalQuantity = filteredData.reduce((s, r) => s + Number(r.Quantity || 0), 0);
+  const totalSales = filteredData.reduce(
+    (s, r) => s + Number(r.Sales || 0),
+    0
+  );
 
-  const profitMargin = totalSales ? (totalProfit / totalSales) * 100 : 0;
+  const totalProfit = filteredData.reduce(
+    (s, r) => s + Number(r.Profit || 0),
+    0
+  );
+
+  const totalQuantity = filteredData.reduce(
+    (s, r) => s + Number(r.Quantity || 0),
+    0
+  );
+
+  const profitMargin = totalSales
+    ? (totalProfit / totalSales) * 100
+    : 0;
 
   const performanceMetrics = [
     {
       title: 'Total Sales',
-      value: totalSales.toLocaleString('en-IN', { style: 'currency', currency: 'INR' }),
+      value: totalSales.toLocaleString('en-IN', {
+        style: 'currency',
+        currency: 'INR'
+      }),
       iconName: 'TrendingUp',
       iconColor: 'var(--color-primary)',
       trend: 'up',
       trendValue: 'Live'
     },
+
     {
       title: 'Total Profit',
-      value: totalProfit.toLocaleString('en-IN', { style: 'currency', currency: 'INR' }),
+      value: totalProfit.toLocaleString('en-IN', {
+        style: 'currency',
+        currency: 'INR'
+      }),
       iconName: 'Activity',
       iconColor: 'var(--color-success)',
       trend: 'up',
       trendValue: 'Live'
     },
+
     {
       title: 'Total Quantity',
       value: totalQuantity.toLocaleString('en-IN'),
@@ -97,6 +121,7 @@ const PerformanceMetrics = () => {
       trend: 'neutral',
       trendValue: 'Live'
     },
+
     {
       title: 'Profit Margin',
       value: `${profitMargin.toFixed(2)}%`,
@@ -108,29 +133,41 @@ const PerformanceMetrics = () => {
   ];
 
   const customerMap = {};
+
   filteredData.forEach(row => {
+
     const name = row["Customer Name"];
     const sales = Number(row.Sales || 0);
     const profit = Number(row.Profit || 0);
     const qty = Number(row.Quantity || 0);
 
     if (!customerMap[name]) {
-      customerMap[name] = { sales: 0, profit: 0, qty: 0 };
+      customerMap[name] = {
+        sales: 0,
+        profit: 0,
+        qty: 0
+      };
     }
 
     customerMap[name].sales += sales;
     customerMap[name].profit += profit;
     customerMap[name].qty += qty;
+
   });
 
-  const chartData = Object.entries(customerMap).map(([name, v]) => ({
-    name,
-    productivity: v.sales
-  }));
+  const chartData = Object.entries(customerMap).map(
+    ([name, v]) => ({
+      name,
+      productivity: v.sales
+    })
+  );
 
   const leaderboardMembers = Object.entries(customerMap)
     .map(([name, v], i) => {
-      const score = v.sales > 0 ? (v.profit / v.sales) * 100 : 0;
+
+      const score = v.sales > 0
+        ? (v.profit / v.sales) * 100
+        : 0;
 
       return {
         id: i,
@@ -139,6 +176,7 @@ const PerformanceMetrics = () => {
         avatar: `https://randomuser.me/api/portraits/men/${i % 50}.jpg`,
         score: Math.round(score)
       };
+
     })
     .filter(m => !isNaN(m.score))
     .sort((a, b) => b.score - a.score)
@@ -152,51 +190,65 @@ const PerformanceMetrics = () => {
   ];
 
   filteredData.forEach(row => {
+
     const s = Number(row.Sales || 0);
 
     if (s <= 5000) distributionData[0].count++;
     else if (s <= 20000) distributionData[1].count++;
     else if (s <= 50000) distributionData[2].count++;
     else distributionData[3].count++;
+
   });
 
   const regionMap = {};
+
   filteredData.forEach(row => {
+
     const region = row.Region;
     const sales = Number(row.Sales || 0);
 
     if (!regionMap[region]) regionMap[region] = 0;
+
     regionMap[region] += sales;
+
   });
 
-  const totalRegionSales = Object.values(regionMap).reduce((a, b) => a + b, 0);
+  const totalRegionSales = Object.values(regionMap)
+    .reduce((a, b) => a + b, 0);
 
-  const resourceAllocations = Object.entries(regionMap).map(([region, val], i) => {
-    const capacity = 40;
+  const resourceAllocations = Object.entries(regionMap)
+    .map(([region, val], i) => {
 
-    const utilizationPercent = totalRegionSales
-      ? (val / totalRegionSales) * 100
-      : 0;
+      const capacity = 40;
 
-    const utilization = Math.round(utilizationPercent);
-    const hours = Math.round((utilization / 100) * capacity);
+      const utilizationPercent = totalRegionSales
+        ? (val / totalRegionSales) * 100
+        : 0;
 
-    let status = "Under-utilized";
-    if (utilization >= 90) status = "Over-allocated";
-    else if (utilization >= 75) status = "High Load";
-    else if (utilization >= 50) status = "Optimal";
+      const utilization = Math.round(utilizationPercent);
 
-    return {
-      id: i,
-      name: region,
-      role: 'Region',
-      project: teamMap[selectedTeam], // ✅ FIXED
-      utilization,
-      hoursPerWeek: hours,
-      totalCapacity: capacity,
-      status
-    };
-  });
+      const hours = Math.round(
+        (utilization / 100) * capacity
+      );
+
+      let status = "Under-utilized";
+
+      if (utilization >= 90) status = "Over-allocated";
+      else if (utilization >= 75) status = "High Load";
+      else if (utilization >= 50) status = "Optimal";
+
+      return {
+        id: i,
+        name: region,
+        role: 'Region',
+        project: teamMap[selectedTeam],
+        utilization,
+        hoursPerWeek: hours,
+        totalCapacity: capacity,
+        status
+      };
+
+    });
 
   return (
     <>
@@ -204,38 +256,66 @@ const PerformanceMetrics = () => {
         <title>Performance Metrics</title>
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background flex flex-col">
+
         <NavigationBar />
 
-        <main className="pt-20 px-6">
+        <main className="flex-1 pt-20 px-6 pb-10">
 
+          {/* FILTERS */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <Select value={selectedTeam} onChange={setSelectedTeam} options={[
-              { value: 'technology', label: 'Technology' },
-              { value: 'office', label: 'Office Supplies' },
-              { value: 'furniture', label: 'Furniture' }
-            ]} />
 
-            <Select value={selectedPeriod} onChange={setSelectedPeriod} options={[
-              { value: 'monthly', label: 'Monthly' },
-              { value: 'quarterly', label: 'Quarterly' },
-              { value: 'yearly', label: 'Yearly' }
-            ]} />
+            <Select
+              value={selectedTeam}
+              onChange={setSelectedTeam}
+              options={[
+                { value: 'technology', label: 'Technology' },
+                { value: 'office', label: 'Office Supplies' },
+                { value: 'furniture', label: 'Furniture' }
+              ]}
+            />
+
+            <Select
+              value={selectedPeriod}
+              onChange={setSelectedPeriod}
+              options={[
+                { value: 'monthly', label: 'Monthly' },
+                { value: 'quarterly', label: 'Quarterly' },
+                { value: 'yearly', label: 'Yearly' }
+              ]}
+            />
+
           </div>
 
-          <div className="grid grid-cols-4 gap-4 mb-6">
+          {/* METRIC CARDS */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
             {performanceMetrics.map((m, i) => (
-              <MetricCard key={i} {...m} />
+              <div
+                key={i}
+                className="hover:scale-[1.02] hover:shadow-lg transition duration-300 rounded-2xl"
+              >
+                <MetricCard {...m} />
+              </div>
             ))}
+
           </div>
 
           <TeamPerformanceChart data={chartData} />
+
           <TeamLeaderboard members={leaderboardMembers} />
 
           <PerformanceDistribution data={distributionData} />
+
           <ResourceAllocationMatrix allocations={resourceAllocations} />
 
         </main>
+
+        {/* FOOTER */}
+        <footer className="text-center py-4 text-sm text-slate-500 border-t border-slate-200 bg-white">
+          AnalyticsPro © 2026 | Cloud-Based Business Intelligence Application
+        </footer>
+
       </div>
     </>
   );

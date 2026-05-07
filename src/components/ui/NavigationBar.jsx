@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Icon from '../AppIcon';
 
 const NavigationBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // 🔥 Upload Success Popup State
+  const [uploadMessage, setUploadMessage] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -40,6 +44,7 @@ const NavigationBar = () => {
   // 🔥 CSV Upload Logic
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
+
     if (!file) return;
 
     const reader = new FileReader();
@@ -48,22 +53,33 @@ const NavigationBar = () => {
       const text = event.target.result;
 
       const rows = text.split("\n").map(r => r.split(","));
+
       const headers = rows[0];
 
       const parsedData = rows.slice(1).map(row => {
         let obj = {};
+
         headers.forEach((h, i) => {
           obj[h.trim()] = row[i]?.trim();
         });
+
         return obj;
       });
 
-      localStorage.setItem("dashboardData", JSON.stringify(parsedData));
+      localStorage.setItem(
+        "dashboardData",
+        JSON.stringify(parsedData)
+      );
 
-    
       window.dispatchEvent(new Event("dataUpdated"));
 
-      alert("CSV Uploaded ");
+      // 🔥 Show Success Popup
+      setUploadMessage(true);
+
+      // 🔥 Hide Popup After 2 Seconds
+      setTimeout(() => {
+        setUploadMessage(false);
+      }, 2000);
     };
 
     reader.readAsText(file);
@@ -71,8 +87,18 @@ const NavigationBar = () => {
 
   return (
     <>
+
+      {/* 🔥 Success Popup */}
+      {uploadMessage && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[9999] bg-green-500 text-white px-5 py-3 rounded-xl shadow-2xl animate-bounce">
+          CSV Uploaded Successfully
+        </div>
+      )}
+
       <nav className="nav-bar">
         <div className="nav-bar-container">
+
+          {/* LOGO */}
           <div className="nav-bar-logo">
             <button
               onClick={() => handleNavigation('/executive-overview')}
@@ -81,8 +107,13 @@ const NavigationBar = () => {
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Icon name="BarChart3" size={24} color="var(--color-primary)" />
+                  <Icon
+                    name="BarChart3"
+                    size={24}
+                    color="var(--color-primary)"
+                  />
                 </div>
+
                 <span className="text-xl font-heading font-semibold text-foreground">
                   AnalyticsPro
                 </span>
@@ -90,13 +121,16 @@ const NavigationBar = () => {
             </button>
           </div>
 
-          {/* 🔥 MENU + UPLOAD */}
+          {/* MENU + UPLOAD */}
           <div className="nav-bar-menu flex items-center gap-4">
+
             {navigationItems?.map((item) => (
               <button
                 key={item?.id}
                 onClick={() => handleNavigation(item?.path)}
-                className={`nav-bar-item ${isActive(item?.path) ? 'active' : ''} focus-ring rounded-md`}
+                className={`nav-bar-item ${
+                  isActive(item?.path) ? 'active' : ''
+                } focus-ring rounded-md`}
                 aria-current={isActive(item?.path) ? 'page' : undefined}
                 title={item?.description}
               >
@@ -104,7 +138,7 @@ const NavigationBar = () => {
               </button>
             ))}
 
-            {/* 🔥 Styled Upload Button */}
+            {/* 🔥 Upload Button */}
             <div>
               <label
                 style={{
@@ -117,6 +151,7 @@ const NavigationBar = () => {
                 }}
               >
                 Upload CSV
+
                 <input
                   type="file"
                   accept=".csv"
@@ -125,30 +160,47 @@ const NavigationBar = () => {
                 />
               </label>
             </div>
+
           </div>
 
+          {/* MOBILE MENU BUTTON */}
           <button
             onClick={toggleMobileMenu}
             className="nav-bar-mobile-toggle focus-ring rounded-md"
             aria-label="Toggle navigation menu"
             aria-expanded={isMobileMenuOpen}
           >
-            <Icon name={isMobileMenuOpen ? 'X' : 'Menu'} size={24} />
+            <Icon
+              name={isMobileMenuOpen ? 'X' : 'Menu'}
+              size={24}
+            />
           </button>
+
         </div>
       </nav>
 
       {/* MOBILE MENU */}
-      <div className={`nav-bar-mobile-menu ${isMobileMenuOpen ? 'open' : 'closed'}`}>
+      <div
+        className={`nav-bar-mobile-menu ${
+          isMobileMenuOpen ? 'open' : 'closed'
+        }`}
+      >
         <div className="nav-bar-mobile-header">
+
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-              <Icon name="BarChart3" size={24} color="var(--color-primary)" />
+              <Icon
+                name="BarChart3"
+                size={24}
+                color="var(--color-primary)"
+              />
             </div>
+
             <span className="text-xl font-heading font-semibold text-foreground">
               AnalyticsPro
             </span>
           </div>
+
           <button
             onClick={toggleMobileMenu}
             className="nav-bar-mobile-close focus-ring rounded-md"
@@ -156,23 +208,34 @@ const NavigationBar = () => {
           >
             <Icon name="X" size={24} />
           </button>
+
         </div>
 
         <div className="nav-bar-mobile-items">
+
           {navigationItems?.map((item) => (
             <button
               key={item?.id}
               onClick={() => handleNavigation(item?.path)}
-              className={`nav-bar-mobile-item ${isActive(item?.path) ? 'active' : ''} focus-ring`}
+              className={`nav-bar-mobile-item ${
+                isActive(item?.path) ? 'active' : ''
+              } focus-ring`}
               aria-current={isActive(item?.path) ? 'page' : undefined}
             >
-              <Icon name={item?.icon} size={20} className="mr-3" />
+              <Icon
+                name={item?.icon}
+                size={20}
+                className="mr-3"
+              />
+
               <span>{item?.label}</span>
             </button>
           ))}
+
         </div>
       </div>
 
+      {/* MOBILE OVERLAY */}
       {isMobileMenuOpen && (
         <div
           className="fixed inset-0 z-[1050] bg-background md:hidden"
@@ -180,6 +243,7 @@ const NavigationBar = () => {
           aria-hidden="true"
         />
       )}
+
     </>
   );
 };

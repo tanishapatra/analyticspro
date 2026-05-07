@@ -31,7 +31,7 @@ const ExecutiveOverview = () => {
 
   /*
   =============================
-  LOAD CSV DATA (FIXED)
+  LOAD CSV DATA
   =============================
   */
 
@@ -46,15 +46,14 @@ const ExecutiveOverview = () => {
       const stored = localStorage.getItem("dashboardData");
 
       if (stored) {
-        setData(JSON.parse(stored)); // ✅ uploaded CSV
+        setData(JSON.parse(stored));
       } else {
-        fetchData(); // default CSV
+        fetchData();
       }
     };
 
     loadData();
 
-    // ✅ FIX: use custom event instead of storage
     window.addEventListener("dataUpdated", loadData);
 
     return () => {
@@ -72,18 +71,22 @@ const ExecutiveOverview = () => {
   useEffect(() => {
     const updateTimestamp = () => {
       const now = new Date();
+
       const timeString = now.toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
         hour12: true,
       });
+
       setLastUpdated(timeString);
     };
 
     updateTimestamp();
+
     const interval = setInterval(updateTimestamp, 60000);
 
     return () => clearInterval(interval);
+
   }, []);
 
   /*
@@ -137,9 +140,13 @@ const ExecutiveOverview = () => {
   */
 
   const totalSales = calculateTotalSales(filteredData);
+
   const totalProfit = calculateTotalProfit(filteredData);
+
   const totalQuantity = calculateTotalQuantity(filteredData);
+
   const regionSales = salesByRegion(filteredData);
+
   const categorySales = salesByCategory(filteredData);
 
   /*
@@ -161,6 +168,7 @@ const ExecutiveOverview = () => {
       iconColor: "var(--color-success)",
       trend: [],
     },
+
     {
       title: "Total Profit",
       value: totalProfit.toLocaleString("en-IN", {
@@ -173,6 +181,7 @@ const ExecutiveOverview = () => {
       iconColor: "var(--color-primary)",
       trend: [],
     },
+
     {
       title: "Total Quantity",
       value: totalQuantity.toLocaleString("en-IN"),
@@ -182,6 +191,7 @@ const ExecutiveOverview = () => {
       iconColor: "var(--color-accent)",
       trend: [],
     },
+
     {
       title: "Regions",
       value: regionSales.length,
@@ -207,7 +217,11 @@ const ExecutiveOverview = () => {
   }));
 
   const chartMetrics = [
-    { key: "revenue", label: "Sales", color: "var(--color-success)" },
+    {
+      key: "revenue",
+      label: "Sales",
+      color: "var(--color-success)"
+    },
   ];
 
   /*
@@ -236,11 +250,13 @@ const ExecutiveOverview = () => {
 
   const handleRefresh = () => {
     const now = new Date();
+
     const timeString = now.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
     });
+
     setLastUpdated(timeString);
   };
 
@@ -258,10 +274,12 @@ const ExecutiveOverview = () => {
         <title>Executive Overview - AnalyticsPro</title>
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background flex flex-col">
+
         <NavigationBar />
 
-        <main className="pt-20 md:pt-24 px-4 md:px-6 lg:px-8 pb-8 md:pb-12">
+        <main className="flex-1 pt-20 md:pt-24 px-4 md:px-6 lg:px-8 pb-8 md:pb-12">
+
           <div className="max-w-[1600px] mx-auto">
 
             <FilterControls
@@ -275,10 +293,18 @@ const ExecutiveOverview = () => {
               lastUpdated={lastUpdated}
             />
 
+            {/* 🔥 KPI CARDS */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+
               {kpiData.map((kpi, index) => (
-                <KPICard key={index} {...kpi} />
+                <div
+                  key={index}
+                  className="hover:scale-[1.02] hover:shadow-lg transition duration-300 rounded-2xl"
+                >
+                  <KPICard {...kpi} />
+                </div>
               ))}
+
             </div>
 
             <MetricsChart
@@ -287,10 +313,18 @@ const ExecutiveOverview = () => {
               onMetricToggle={handleMetricToggle}
             />
 
-            <PerformanceScorecard departments={departmentPerformance} />
+            <PerformanceScorecard
+              departments={departmentPerformance}
+            />
 
           </div>
         </main>
+
+        {/* 🔥 FOOTER */}
+        <footer className="text-center py-4 text-sm text-slate-500 border-t border-slate-200 bg-white">
+          AnalyticsPro © 2026 | Cloud-Based Business Intelligence Application
+        </footer>
+
       </div>
     </>
   );
